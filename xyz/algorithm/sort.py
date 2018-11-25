@@ -11,7 +11,7 @@ def swap(lst, i, j):
     lst[j] = tmp
 
 
-def bubble_sort(lst):
+def bubble_sort(lst, compare_fun):
     """
     冒泡排序 O(n^2) O(n^2) O(n)
     """
@@ -20,11 +20,11 @@ def bubble_sort(lst):
     l = len(lst)
     for i in range(l):
         for j in range(i + 1, l):
-            if lst[j] < lst[i]:
+            if compare_fun(lst[i], lst[j]) > 0:
                 swap(lst, i, j)
 
 
-def select_sort(lst):
+def select_sort(lst, compare_fun):
     """
     选择排序，选取最小的 O(n^2) O(n^2) O(n^2)
     """
@@ -34,12 +34,12 @@ def select_sort(lst):
     for i in range(l):
         m_idx = i
         for j in range(i + 1, l):
-            if lst[j] < lst[m_idx]:
+            if compare_fun(lst[j], lst[m_idx]) < 0:
                 m_idx = j
         swap(lst, i, m_idx)
 
 
-def insert_sort(lst):
+def insert_sort(lst, compare_fun):
     """
     插入排序，
     """
@@ -49,7 +49,7 @@ def insert_sort(lst):
     for i in range(l):
         p_idx = i - 1
         val = lst[i]
-        while p_idx >= 0 and lst[p_idx] > val:
+        while p_idx >= 0 and compare_fun(lst[p_idx], val) > 0:
             lst[p_idx + 1] = lst[p_idx]
             p_idx -= 1
         lst[p_idx+ 1] = val

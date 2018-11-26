@@ -16,12 +16,13 @@ def bubble_sort(lst, compare_fun):
     冒泡排序 O(n^2) O(n^2) O(n)
     """
     if not lst:
-        return []
+        return False
     l = len(lst)
     for i in range(l):
         for j in range(i + 1, l):
             if compare_fun(lst[i], lst[j]) > 0:
                 swap(lst, i, j)
+    return True
 
 
 def select_sort(lst, compare_fun):
@@ -29,7 +30,7 @@ def select_sort(lst, compare_fun):
     选择排序，选取最小的 O(n^2) O(n^2) O(n^2)
     """
     if not lst:
-        return []
+        return False
     l = len(lst)
     for i in range(l):
         m_idx = i
@@ -37,6 +38,7 @@ def select_sort(lst, compare_fun):
             if compare_fun(lst[j], lst[m_idx]) < 0:
                 m_idx = j
         swap(lst, i, m_idx)
+    return True
 
 
 def insert_sort(lst, compare_fun):
@@ -44,7 +46,7 @@ def insert_sort(lst, compare_fun):
     插入排序，
     """
     if not lst:
-        return []
+        return False
     l = len(lst)
     for i in range(l):
         p_idx = i - 1
@@ -53,6 +55,7 @@ def insert_sort(lst, compare_fun):
             lst[p_idx + 1] = lst[p_idx]
             p_idx -= 1
         lst[p_idx+ 1] = val
+    return True
  
 
 def shell_sort(lst):
@@ -60,6 +63,10 @@ def shell_sort(lst):
 
 
 def quick_sort(lst, r, l, compare_fun):
+    if not lst or not r or not l or not compare_fun:
+        return False
+    if l < r:
+        return False
     def partition(lst, l, r):
         x = lst[r]
         i = l - 1
@@ -76,8 +83,7 @@ def quick_sort(lst, r, l, compare_fun):
             _quick_sort(lst, l, q - 1)
             _quick_sort(lst, q + 1, r)
     _quick_sort(lst, r, l)
-     
-    
+    return True
 
 
 if __name__ == '__main__':

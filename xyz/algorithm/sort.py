@@ -59,6 +59,10 @@ def shell_sort(lst):
     pass
 
 
+def quick_sort(lst, compare_fun):
+    pass
+
+
 if __name__ == '__main__':
     if 1:
         lst = [1, 3]

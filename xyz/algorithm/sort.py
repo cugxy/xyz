@@ -59,8 +59,25 @@ def shell_sort(lst):
     pass
 
 
-def quick_sort(lst, compare_fun):
-    pass
+def quick_sort(lst, r, l, compare_fun):
+    def partition(lst, l, r):
+        x = lst[r]
+        i = l - 1
+        for j in range(l, r):
+            if compare_fun(lst[j], x) <= 0:
+                i += 1
+                lst[i], lst[j] = lst[j], lst[i]
+        lst[i + 1], lst[r] = lst[r], lst[i+1]
+        return i + 1
+
+    def _quick_sort(lst, l, r):
+        if l < r:
+            q = partition(lst, l, r)
+            _quick_sort(lst, l, q - 1)
+            _quick_sort(lst, q + 1, r)
+    _quick_sort(lst, r, l)
+     
+    
 
 
 if __name__ == '__main__':

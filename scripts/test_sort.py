@@ -18,5 +18,5 @@ if __name__ == '__main__':
             else:
                 return 1
         print(a)
-        select_sort(a, compare_lst)
+        quick_sort(a, compare_lst)
         print(a)

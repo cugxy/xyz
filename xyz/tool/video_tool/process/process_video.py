@@ -50,7 +50,7 @@ class GetImgThread(QThread):
             img_path = '%s/sample.png' % self.dir_path
             if self._get_simple_image(self.video_path, int(self.sample_ts), img_path):
                 if self.logger:
-                    self.logger.info('成功截取图片，请查看 %s  找到杆塔号最后一位在图片中的位置' % img_path)
+                    self.logger.info('成功截取图片！' % img_path)
         except Exception as e:
             if self.logger:
                 self.logger.error(e)

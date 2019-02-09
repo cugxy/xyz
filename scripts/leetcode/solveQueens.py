@@ -33,5 +33,26 @@ class Solution(object):
         pass
 
 
+class Board(object):
+    """
+    棋盘
+    """
+
+    def __init__(self, n):
+        self.n = n
+        self.board = []
+        for i in range(n):
+            self.board.append([])
+            for _ in range(n):
+                self.board[i][_] = 0
+
+    def check(self):
+        """
+        位操作 判断
+        :return:
+        """
+        pass
+
+
 if __name__ == '__main__':
     pass

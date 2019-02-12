@@ -25,34 +25,52 @@ class Solution(object):
     ]
     解释: 4 皇后问题存在两个不同的解法。
     """
+    N = 0
+    arr = []
+    result = 0
+
     def solveNQueens(self, n):
         """
         :type n: int
         :rtype: List[List[str]]
         """
-        pass
+        self.N = n
+        self.arr = [0 for _ in range(n)]
+        self.result = 0
+        self.queen(0)
+        return self.result
 
-
-class Board(object):
-    """
-    棋盘
-    """
-
-    def __init__(self, n):
-        self.n = n
-        self.board = []
-        for i in range(n):
-            self.board.append([])
-            for _ in range(n):
-                self.board[i][_] = 0
-
-    def check(self):
+    def queen(self, n):
         """
-        位操作 判断
+        放置第n列皇后的回溯函数,参数n表示第n列(从0开始)
+        :param n:
         :return:
         """
-        pass
+        if self.N == n:
+            self.print()
+            return
+        for i in range(self.N):
+            self.arr[n] = i
+            if self.check(n):
+                self.queen(n + 1)
+
+    def check(self, n):
+        """
+        判断第n列放置的皇后是否与前面的冲突
+        :param n:
+        :return:
+        """
+        for i in range(n):
+            if self.arr[n] == self.arr[i] or abs((self.arr[n]-self.arr[i])) == abs((n-i)):
+                return False
+        return True
+
+    def print(self):
+        self.result += 1
 
 
 if __name__ == '__main__':
+    s = Solution()
+    r = s.solveNQueens(4)
+    print(r)
     pass

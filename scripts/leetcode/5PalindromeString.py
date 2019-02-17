@@ -74,6 +74,16 @@ def get_longst_substr(str1, str2):
 
 class Solution:
     def longestPalindrome(self, s):
+        """
+        基本思路是对任意字符串，如果头和尾相同，那么它的最长回文子串一定是去头去尾之后的部分的最长回文子串加上头和尾。如果头和尾不同，那么它的最长回文子串是去头的部分的最长回文子串和去尾的部分的最长回文子串的较长的那一个。
+        P[i,j]P[i,j]表示第i到第j个字符的回文子串数
+        dp[i,i]=1dp[i,i]=1
+        dp[i,j]=dp[i+1,j−1]+2|s[i]=s[j]dp[i,j]=dp[i+1,j−1]+2|s[i]=s[j]
+        dp[i,j]=max(dp[i+1,j],dp[i,j−1])|s[i]!=s[j]
+
+        :param s:
+        :return:
+        """
         n = len(s)
         maxl = 0
         start = 0

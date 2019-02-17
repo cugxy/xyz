@@ -7,11 +7,22 @@
 """
 
 
-from algorithm.DFS import Node, DFS
-
-
-
 class Solution:
+    """
+    编写一个程序，通过已填充的空格来解决数独问题。
+
+    一个数独的解法需遵循如下规则：
+
+    数字 1-9 在每一行只能出现一次。
+    数字 1-9 在每一列只能出现一次。
+    数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+    空白格用 '.' 表示。
+
+    tips:
+    给定的数独序列只包含数字 1-9 和字符 '.' 。
+    你可以假设给定的数独只有唯一解。
+    给定数独永远是 9x9 形式的。
+    """
     def solveSudoku(self, board):
         """
         [
@@ -25,6 +36,8 @@ class Solution:
             [".",".",".","4","1","9",".",".","5"],
             [".",".",".",".","8",".",".","7","9"]
         ]
+        首先，填写能够确定的
+        回溯法
         :type board: List[List[str]]
         :rtype: void Do not return anything, modify board in-place instead.
         """
@@ -33,10 +46,6 @@ class Solution:
         for i in range(9):
             for j in range(9):
                 v = board[i][j]
-
-
-
-
 
 
 if __name__ == '__main__':

@@ -16,6 +16,7 @@ class Sudoku:
 
     def __init__(self, board):
         self.board = board
+        self.uncertains = {}
 
     def check(self):
         pass
@@ -26,36 +27,48 @@ class Sudoku:
         pass
 
     def check_ok(self):
-        pass
+        return len(self.uncertains) == 0
 
     def print(self):
         print(self.board)
 
     def __first_insert(self):
         """
-        第一次计算，确定可以确定的值
+        第一次计算，确定所有可以确定的值
         :return:
         """
         while True:
-            flag = True
-            for i in range(self.N):
-                for j in range(self.N):
-                    if self.board[i][j] != 0:
-                        continue
-                    r = self.__calculate_in_i_j(i, j)
-                    if len(r) != 1:
-                        continue
-                    self.board[i][j] = r[0]
-                    flag = False
-            if flag:
+            if not self.__calculate_once():
                 break
+
+    def __calculate_once(self):
+        """
+        遍历一次
+        :return: True 有改变原始数独 False 未改变原始数独
+        """
+        flag = False
+        for i in range(self.N):
+            for j in range(self.N):
+                if self.board[i][j] != 0:
+                    continue
+                r = self.__calculate_in_i_j(i, j)
+                key = '%i-%i' % (i, j, )
+                l = len(r)
+                if l != 1:
+                    self.uncertains[key] = r
+                    continue
+                self.board[i][j] = r[0]
+                if key in self.uncertains:
+                    self.uncertains.pop(key)
+                flag = True
+        return flag
 
     def __calculate_in_i_j(self, i, j):
         """
         计算 i j 位置的可能值
         :param i:
         :param j:
-        :return:
+        :return: 可能值 list
         """
         row = self.board[i]
         col = [x[j] for x in self.board]

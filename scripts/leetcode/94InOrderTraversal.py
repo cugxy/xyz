@@ -13,6 +13,7 @@ class TreeNode:
         self.left = None
         self.right = None
 
+
 class Solution(object):
     result = []
 
@@ -21,6 +22,7 @@ class Solution(object):
         :type root: TreeNode
         :rtype: List[int]
         """
+        self.result = []
         if root == []:
             return self.result
         self.func(root)
@@ -36,8 +38,9 @@ class Solution(object):
         if root.right is not None:
             self.func(root.right)
 
+
 if __name__ == '__main__':
     root = TreeNode()
-    s  = Solution()
+    s = Solution()
     r = s.inorderTraversal([])
     pass

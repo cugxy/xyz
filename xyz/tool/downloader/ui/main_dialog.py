@@ -43,13 +43,16 @@ class MainDialog(QDialog):
         self.init_connect()
 
     def init_ui(self):
+        self.__ui.thread_count_edit.setText('10')
+        self.__ui.start_zoom_edit.setText('0')
+        self.__ui.end_zoom_edit.setText('13')
         self.__ui.root_dir_edit.setText(self.setting.value(ROOT_DIR))
         self.init_access_token()
 
     def init_access_token(self):
-        self.__ui.edit_access_token.setText('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJkZGM5ZDhhNi00MTEzLTQ3YzUt'
-                                            'OGQ1Zi0xZjE3MGM0NDYzNWEiLCJpZCI6MjU5LCJpYXQiOjE1MzU3MjQyMjh9.pIEOyZPuF4xHR'
-                                            'zAQFnDgZJwgpLXDtS7vGMwha6fCs2g')
+        self.__ui.edit_access_token.setText('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwMWUwZGNmZi04ZDUzLTQzOTctO'
+                                            'WE0Mi0yNWU1NjE2YWJmYzAiLCJpZCI6MzUxMCwiaWF0IjoxNTM3ODc3NTE3fQ.T18eFga9kBsC'
+                                            'PvoDNh0nj-wmN442uG1D13nLguknJ9A')
         self.__ui.widget_access_token.hide()
 
     def init_logger(self):
@@ -89,6 +92,7 @@ class MainDialog(QDialog):
         self.__ui.min_lng_edit.setEnabled(enable)
         self.__ui.start_zoom_edit.setEnabled(enable)
         self.__ui.end_zoom_edit.setEnabled(enable)
+        self.__ui.db_radiobtn.setEnabled(enable)
 
     def slot_data_type_combox_changed(self, index):
         if index == 2:
@@ -111,10 +115,11 @@ class MainDialog(QDialog):
             self.reset_progress()
             self.__ui.download_btn.setText(_translate("Dialog", "pause"))
             self.set_ui_state(False)
+            write_db = self.__ui.db_radiobtn.isChecked()
             if self.data_type == 'google':
-                self.download_engine = GoogleDownloadEngine(self.root_dir, self.bbox, self.thread_count, self.logger)
+                self.download_engine = GoogleDownloadEngine(self.root_dir, self.bbox, self.thread_count, self.logger, write_db)
             elif self.data_type == 'tianditu':
-                self.download_engine = TDTDownloadEngine(self.root_dir, self.bbox, self.thread_count, self.logger)
+                self.download_engine = TDTDownloadEngine(self.root_dir, self.bbox, self.thread_count, self.logger, write_db)
             elif self.data_type == 'terrain':
                 token = self.__ui.edit_access_token.text()
                 if not token:
@@ -122,7 +127,7 @@ class MainDialog(QDialog):
                                           _translate("Dialog", "Please enter access token first!"))
                     msg_box.exec_()
                 else:
-                    self.download_engine = TerrainDownloadEngine(self.root_dir, self.bbox, token, self.thread_count, self.logger)
+                    self.download_engine = TerrainDownloadEngine(self.root_dir, self.bbox, token, self.thread_count, self.logger, write_db)
             else:
                 return
             self.download_engine.division_done_signal.connect(self.slot_division_done)

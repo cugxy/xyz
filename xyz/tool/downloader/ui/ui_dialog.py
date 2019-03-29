@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/Users/cugxy/Documents/git/LiGlobal/LiGlobal/tool/downloader/ui/main_dialog.ui'
+# Form implementation generated from reading ui file 'D:\xy\git\LiGlobal\LiGlobal\tool\downloader\ui\main_dialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -83,6 +83,9 @@ class Ui_Dialog(object):
         self.thread_count_edit.setObjectName("thread_count_edit")
         self.horizontalLayout_7.addWidget(self.thread_count_edit)
         self.verticalLayout_2.addLayout(self.horizontalLayout_7)
+        self.db_radiobtn = QtWidgets.QRadioButton(self.groupBox_4)
+        self.db_radiobtn.setObjectName("db_radiobtn")
+        self.verticalLayout_2.addWidget(self.db_radiobtn)
         self.widget_access_token = QtWidgets.QWidget(self.groupBox_4)
         self.widget_access_token.setObjectName("widget_access_token")
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout(self.widget_access_token)
@@ -279,6 +282,7 @@ class Ui_Dialog(object):
         self.data_type_combox.setItemText(1, _translate("Dialog", "MAP WORLD image"))
         self.data_type_combox.setItemText(2, _translate("Dialog", "Cesium terrain"))
         self.label_8.setText(_translate("Dialog", "thread count："))
+        self.db_radiobtn.setText(_translate("Dialog", "write to database"))
         self.label_11.setText(_translate("Dialog", "access_token："))
         self.groupBox.setTitle(_translate("Dialog", "gps"))
         self.label_2.setText(_translate("Dialog", "max latitude:"))

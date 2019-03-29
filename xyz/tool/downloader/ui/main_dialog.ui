@@ -143,6 +143,13 @@
        </layout>
       </item>
       <item>
+       <widget class="QRadioButton" name="db_radiobtn">
+        <property name="text">
+         <string>write to database</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="widget_access_token" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>

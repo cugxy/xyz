@@ -38,6 +38,9 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
+    def print(self):
+        pass
+
 
 class Solution(object):
     def generateTrees(self, n):
@@ -45,6 +48,16 @@ class Solution(object):
         :type n: int
         :rtype: List[TreeNode]
         """
+        pass
+
+    def fun(self, n):
+        tree = TreeNode(n)
+        if n == 1:
+            return tree
+        tree.left = self.fun(n - 1)
+        return tree
+
+
 
 
 if __name__ == '__main__':

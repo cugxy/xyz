@@ -38,27 +38,41 @@ class TreeNode(object):
         self.left = None
         self.right = None
 
-    def print(self):
-        pass
+    def __str__(self):
+        return 'val:%i left:%s right:%s' % (self.val, self.left, self.right, )
 
 
 class Solution(object):
     def generateTrees(self, n):
         """
+        类似第 96 题,当 n <= 1 时, 直接返回 [Node(n), ]
+        当 n > 1 时, 则对于 i(遍历 n), 二叉树, 为 lefts i rights (中序遍历), 其中 lefts 为 左子树可能的列表, rights 为右子树可能列表
         :type n: int
         :rtype: List[TreeNode]
         """
-        pass
+        if n < 1:
+            return []
+        return self.fun(1, n)
 
-    def fun(self, n):
-        tree = TreeNode(n)
-        if n == 1:
-            return tree
-        tree.left = self.fun(n - 1)
-        return tree
-
-
+    def fun(self, s, e):
+        result = []
+        if s > e:
+            result.append(None);
+            return result
+        for i in range(s, e + 1):
+            lefts = self.fun(s, i - 1)
+            rights = self.fun(i + 1, e)
+            for left in lefts:
+                for right in rights:
+                    root = TreeNode(i)
+                    root.left = left
+                    root.right = right
+                    result.append(root)
+        return result
 
 
 if __name__ == '__main__':
+    s = Solution()
+    r = s.generateTrees(3)
+    print(r)
     pass

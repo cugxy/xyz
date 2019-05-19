@@ -41,6 +41,7 @@ class Solution(object):
     解释: 输入为: [5,1,4,null,null,3,6]。
      根节点的值为 5 ，但是其右子节点值为 4 。
     """
+    lst = []
     def isValidBST(self, root):
         """
         二叉树中序遍历 解决
@@ -49,18 +50,17 @@ class Solution(object):
         """
         if not root:
             return True
-        lst = []
-        self.get_list(root, lst)
-        return lst != sorted(list(set(lst))):
+        self.get_list(root)
+        return self.lst == sorted(list(set(self.lst)))
 
-    def get_list(self, root, lst):
+    def get_list(self, root):
         if not root:
             return
         if root.left is not None:
-            self.get_list(root.left, lst)
-        lst.append(root.val)
+            self.get_list(root.left)
+        self.lst.append(root.val)
         if root.right is not None:
-            self.get_list(root.right, lst)
+            self.get_list(root.right)
 
 
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
              /  \
             6   20
     """
-    
+    n0 = TreeNode(0)
     n10 = TreeNode(10)
     n5 = TreeNode(5)
     n15 = TreeNode(15)
@@ -85,5 +85,5 @@ if __name__ == '__main__':
     n10.right = n15
     n15.left = n6
     n15.right = n20
-    r = s.isValidBST(n10)
+    r = s.isValidBST(n0)
     print(r)

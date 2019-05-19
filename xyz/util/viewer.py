@@ -3,7 +3,7 @@
 import os
 if not os.environ.get('MPLCONFIGDIR',None):
     import getpass
-    os.environ['MPLCONFIGDIR'] = '/home/%s/.matplotlib'%(getpass.getuser(),)
+    os.environ['MPLCONFIGDIR'] = '/home/%s/.matplotlib' % (getpass.getuser(),)
 import numpy
 from numpy.lib.stride_tricks import as_strided
 import matplotlib
@@ -12,21 +12,29 @@ if os.name == 'posix':
     matplotlib.use('Agg')
 else:
     try:
-        from mayavi import mlab
+        from mayavi import mlab     # https://docs.enthought.com/mayavi/mayavi/
     except (ImportError, ValueError) as e:
         pass
+
+
+# -------------------------------------------------------------
 
 
 def show(): 
     mlab.show()
 
-# -------------------------------------------------------------
-
 
 def show_cloud(arr, idx=None, color=None, colormap=None):
+    """
+    绘制 点云
+    :param arr: 点云 n*3
+    :param idx: idx 筛选
+    :param color: 颜色 (r, g, b)
+    :param colormap: 色带 默认 'blue-red'
+    :return:
+    """
     A = numpy.atleast_2d(arr)
     A = A.T if idx is None else (A[idx]).T
-    
     if color is None:
         return mlab.points3d(A[0],A[1],A[2],mode='point')
     colormap = colormap or 'blue-red'
@@ -97,6 +105,15 @@ def show_quiver(arr, vct, scale=1., color=None):
 
 
 def show_tin(arr, idx, color=None, colormap=None, suface=False):
+    """
+    绘制三角网格
+    :param arr:  顶点 n*3
+    :param idx:  顶点 index
+    :param color:   颜色 (r, g, b)
+    :param colormap: 色带,默认 'blue-red'
+    :param suface: 是否填充
+    :return:
+    """
     A = numpy.atleast_2d(arr)
     A = A.T
     x = A[0]
@@ -107,7 +124,27 @@ def show_tin(arr, idx, color=None, colormap=None, suface=False):
         representation = 'surface'
     if color is None:
         return mlab.triangular_mesh(x, y, z, idx, representation=representation)
+    colormap = colormap or 'blue-red'
     return mlab.triangular_mesh(x, y, z, idx, color=color, colormap=colormap, representation=representation)
+
+
+def show_line(arr, color=None, colormap=None):
+    """
+    绘制线
+    :param arr: 顶点 n*3
+    :param color: 颜色 (r, g, b)
+    :param colormap: 色带,默认 'blue-red'
+    :return:
+    """
+    A = numpy.atleast_2d(arr)
+    A = A.T
+    x = A[0]
+    y = A[1]
+    z = A[2]
+    if color is None:
+        return mlab.plot3d(x, y, z)
+    colormap = colormap or 'blue-red'
+    return mlab.plot3d(x, y, z, color=color, colormap=colormap)
 
 
 if __name__ == '__main__':

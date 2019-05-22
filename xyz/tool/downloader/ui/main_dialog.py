@@ -9,10 +9,10 @@
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QDialog
 from PyQt5.QtCore import QSettings
 
-from LiGlobal.tool.downloader.ui.ui_dialog import *
-from LiGlobal.tool.downloader.cmd.GoogleDownloader import *
-from LiGlobal.tool.downloader.cmd.TDTDownloader import *
-from LiGlobal.tool.downloader.cmd.TerrainDownloader import *
+from xyz.tool.downloader.ui.ui_dialog import *
+from xyz.tool.downloader.cmd.GoogleDownloader import *
+from xyz.tool.downloader.cmd.TDTDownloader import *
+from xyz.tool.downloader.cmd.TerrainDownloader import *
 
 
 ROOT_DIR = 'ROOT_DIR'
@@ -119,6 +119,8 @@ class MainDialog(QDialog):
             if self.data_type == 'google':
                 self.download_engine = GoogleDownloadEngine(self.root_dir, self.bbox, self.thread_count, self.logger, write_db)
             elif self.data_type == 'tianditu':
+                if self.bbox.start_zoom == 0:
+                    self.bbox.start_zoom = 1
                 self.download_engine = TDTDownloadEngine(self.root_dir, self.bbox, self.thread_count, self.logger, write_db)
             elif self.data_type == 'terrain':
                 token = self.__ui.edit_access_token.text()

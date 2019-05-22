@@ -279,7 +279,7 @@ class Ui_Dialog(object):
         self.root_dir_btn.setText(_translate("Dialog", "Browse"))
         self.label_10.setText(_translate("Dialog", "data type："))
         self.data_type_combox.setItemText(0, _translate("Dialog", "Google image"))
-        self.data_type_combox.setItemText(1, _translate("Dialog", "MAP WORLD image"))
+        self.data_type_combox.setItemText(1, _translate("Dialog", "Tianditu label"))
         self.data_type_combox.setItemText(2, _translate("Dialog", "Cesium terrain"))
         self.label_8.setText(_translate("Dialog", "thread count："))
         self.db_radiobtn.setText(_translate("Dialog", "write to database"))

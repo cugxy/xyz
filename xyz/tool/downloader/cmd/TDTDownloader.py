@@ -4,33 +4,38 @@
 
 import os, math, logging, random, requests, time, json
 
-from LiGlobal.tool.downloader.cmd.BaseDownloader import DownloadEngine, BaseDownloaderThread, latlng2tile_TD, BoundBox
+from xyz.tool.downloader.cmd.BaseDownloader import DownloadEngine, BaseDownloaderThread, latlng2tile_TD, BoundBox
 
 
 class TDTDownloaderThread(BaseDownloaderThread):
-    URL = 'http://t%s.tianditu.gov.cn/DataServer?T=cva_c&tk=997487c2aa6dc93d84169f293ae2073d&x={x}&y={y}&l={z}'
+    # 两个 url 均可用
+    # URL = 'http://t{s}.tianditu.gov.cn/DataServer?T=cia_w&x={x}&y={y}&l={z}&tk={token}'
 
-    def __init__(self, root_dir, bbox, task_q, logger=None, write_db=False):
+    URL = 'http://t{s}.tianditu.com/cia_w/wmts?service=WMTS&version=1.0.0&request=GetTile&tilematrix={z}&layer=cia&' \
+          'style=default&tilerow={y}&tilecol={x}&tilematrixset=w&format=tiles&tk={token}'
+
+    def __init__(self, root_dir, bbox, task_q, token=None, logger=None, write_db=False):
         super(TDTDownloaderThread, self).__init__(root_dir, bbox, task_q, logger, write_db=write_db, db_file_name='TDT.db')
+        self.token = '927189e42d80e95e48f39472387aacc6'
+        if token is not None:
+            self.token = token
 
     def get_url(self, x, y, z):
-        ti = random.randint(0, 7)
-        url = self.URL % ti
-        return url.format(x=x, y=y, z=z)
+        s = random.randint(1, 6)
+        return self.URL.format(s=s, x=x, y=y, z=z, token=self.token)
 
     def _download(self, x, y, z):
-        file_path = '%s/%s/%i/%i/%i.%s' % (self.root_dir, 'tianditu', z+1, x, y, 'png')
+        file_path = '%s/%s/%i/%i/%i.%s' % (self.root_dir, 'tianditu', z, x, y, 'png')
         if os.path.exists(file_path):
             self._data2DB(x, y, z, file_path)
             return 0    # 已存在
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         resp = None
         requre_count = 0
-        _url = ''
         while True:
             if requre_count > 4: break
             try:
-                _url = self.get_url(x, y, z+1)
+                _url = self.get_url(x, y, z)
                 resp = requests.get(_url, stream=True, timeout=2)
                 break
             except Exception as e:
@@ -67,7 +72,9 @@ class TDTDownloadEngine(DownloadEngine):
     def generate_metadata(self):
         try:
             bounds = '%d %d %d %d' % (self.bbox.min_lng, self.bbox.min_lat, self.bbox.max_lng, self.bbox.max_lat)
-            metadatas = {'attribution': 'http://t%s.tianditu.cn/DataServer?T=img_w&X={x}&Y={y}&L={z}',
+            metadatas = {'attribution': 'http://t{s}.tianditu.com/cia_w/wmts?service=WMTS&version=1.0.0&'
+                                        'request=GetTile&tilematrix={z}&layer=cia&style=default&tilerow={x}&'
+                                        'tilecol={y}&tilematrixset=w&format=tiles&tk={token}',
                          'bounds': bounds,
                          'description': 'TiandituDowmloader',
                          'format': 'png',
@@ -76,7 +83,7 @@ class TDTDownloadEngine(DownloadEngine):
                          'version': 1.2}
             _dir = os.path.join(self.root_dir, 'tianditu')
             os.makedirs(_dir, exist_ok=True)
-            metadatas_path = os.path.join(self.root_dir, 'metadata.json')
+            metadatas_path = os.path.join(_dir, 'metadata.json')
             with open(metadatas_path, 'w') as f:
                 json.dump(metadatas, f)
         except Exception as e:
@@ -90,7 +97,7 @@ class TDTDownloadEngine(DownloadEngine):
             self.threads = []
             self.division_done_signal.emit(task_q.qsize())
             for i in range(self.thread_num):
-                thread = TDTDownloaderThread(self.root_dir, self.bbox, task_q, self.logger, write_db=self.write_db)
+                thread = TDTDownloaderThread(self.root_dir, self.bbox, task_q, logger=self.logger, write_db=self.write_db)
                 thread.sub_progressBar_updated_signal.connect(self.sub_update_progressBar)
                 self.threads.append(thread)
             for thread in self.threads:

@@ -8,7 +8,7 @@ from PyQt5.QtCore import QThread, pyqtSignal
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from LiGlobal.tool.downloader.cmd.model import *
+from xyz.tool.downloader.cmd.model import *
 
 def latlng2tile_google(lat_deg, lng_deg, z):
     """
@@ -38,10 +38,12 @@ def latlng2tile_TD(lat_deg, lng_deg, zoom):
     zoom    -- map scale (0-18)
     Return two parameters as tile numbers in x axis and y axis
     """
-    n = math.pow(2, int(zoom + 1))
-    reg = 360.0 / n
-    x = (lng_deg + 180.0) // reg
-    y = (90.0-lat_deg) // reg
+    if lat_deg >= 85.05112877980659 or lat_deg <= -85.05112877980659:
+        raise Exception('wmts latitude error lat')
+    lat_rad = math.radians(lat_deg)
+    n = 2.0 ** zoom
+    x = ((lng_deg + 180.0) / 360.0 * n)
+    y = ((1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
     return x, y
 
 
@@ -156,19 +158,19 @@ class BaseDownloaderThread(QThread):
     def __del__(self):
         self.wait()
         if self.write_db:
-            self.session.commit()
+            self.commit()
             self.session.close()
 
     def stop(self):
         self.stopped = True
         if self.write_db:
-            self.session.commit()
+            self.commit()
 
     def pause(self):
         if self.isRunning():
             self.running = not self.running
         if self.write_db:
-            self.session.commit()
+            self.commit()
 
     def run(self):
         try:
@@ -191,14 +193,14 @@ class BaseDownloaderThread(QThread):
                     self.sub_progressBar_updated_signal.emit()
                 if self.stopped:
                     if self.write_db:
-                        self.session.commit()
+                        self.commit()
                     break
             if self.write_db:
-                self.session.commit()
+                self.commit()
                 self.session.close()
         except Exception as e:
             if self.write_db:
-                self.session.commit()
+                self.commit()
                 self.session.close()
             if self.logger is not None:
                 self.logger.error(e)
@@ -230,16 +232,20 @@ class BaseDownloaderThread(QThread):
         self.session.add(tile)
         self.num += 1
         if self.num % 100 == 0:
-            self.session.commit()
+            self.commit()
         return 1
+
+    def commit(self):
+        try:
+            self.session.commit()
+        except Exception as e:
+            QThread.sleep(10)
+            if self.logger:
+                self.logger.error(e)
 
 
 class DownloadEngine(QThread):
-    bbox = None
     logger = None
-
-    thread_num = 0
-    threads = []
 
     division_done_signal = pyqtSignal(int)
     download_done_signal = pyqtSignal()
@@ -250,6 +256,7 @@ class DownloadEngine(QThread):
         self.bbox = bbox
         self.logger = logger
         self.thread_num = int(thread_num)
+        self.threads = []
         self.write_db = write_db
 
     def __del__(self):

@@ -4,8 +4,7 @@
 
 import os, math, logging, requests, time
 
-from LiGlobal.tool.downloader.cmd.BaseDownloader import DownloadEngine, BaseDownloaderThread, latlng2tile_terrain, BoundBox
-
+from xyz.tool.downloader.cmd.BaseDownloader import DownloadEngine, BaseDownloaderThread, latlng2tile_terrain, BoundBox
 
 
 def get_access_token(token):

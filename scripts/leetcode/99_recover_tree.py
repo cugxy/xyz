@@ -70,8 +70,6 @@ class Solution(object):
         node2 = self._find(root, val2)
         node1.val = val2
         node2.val = val1
-        embed()
-        return root
 
     def _order(self, root, rs):
         if root is None:

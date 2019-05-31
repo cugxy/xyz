@@ -42,6 +42,8 @@ class TreeNode:
 class Solution:
     def levelOrder(self, root: TreeNode):
         rs = []
+        if root is None:
+            return rs
         q = []
         q.append(root)
         while len(q) != 0:

@@ -68,12 +68,36 @@ class TreeNode(object):
         self.right = None
 
 
+def heigh(root):
+    if root is None:
+        return 0
+    left = heigh(root.left)
+    right = heigh(root.right)
+    return max(left, right) + 1
+
+
+def func(root):
+    if root is None:
+        return True
+    left_h = heigh(root.left)
+    right_h = heigh(root.right)
+    if abs(left_h - right_h) > 1:
+        return False
+    rs1, rs2 = True, True
+    if root.left:
+        rs1 = func(root.left)
+    if root.right:
+        rs2 = func(root.right)
+    return rs1 & rs2
+
+
 class Solution(object):
     def isBalanced(self, root):
         """
         :type root: TreeNode
         :rtype: bool
         """
+        return func(root)
 
 
 if __name__ == '__main__':

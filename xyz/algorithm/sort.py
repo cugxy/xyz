@@ -1,10 +1,12 @@
 #!usr/bin/env python  
-#-*- coding:utf-8 _*-  
+# -*- coding:utf-8 _*-
 """ 
 @author:$USER
 @file: $NAME 
 @time: $YEAR/$MONTH/$DAY
-"""  
+"""
+
+
 def swap(lst, i, j):
     tmp = lst[i]
     lst[i] = lst[j]
@@ -67,6 +69,7 @@ def quick_sort(lst, r, l, compare_fun):
         return False
     if l < r:
         return False
+
     def partition(lst, l, r):
         x = lst[r]
         i = l - 1
@@ -92,4 +95,4 @@ if __name__ == '__main__':
         print(lst)
         swap(lst, 0, 1)
         print(lst)
-        
+

@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS t_test (id serial, name text);

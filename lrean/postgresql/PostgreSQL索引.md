@@ -138,5 +138,7 @@ postgresql_test=# EXPLAIN SELECT id FROM t_test WHERE id=1234;
 实际上, 甚至可以在一个索引中包括额外列来享受这一特性, 在 MySQL 中, 增加额外列被称为 **覆盖索引** . PostgreSQL 也能实现类型形为.
 
 # 理解另外的 B-Tree 特性
+## 组合索引与个体索引
+- 一般规则为: 如果单个索引能够回答用户的问题, 它通常就是最好的选择. 不过, 不可能在人们过滤域
 
 

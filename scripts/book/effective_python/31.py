@@ -12,8 +12,12 @@
 
 用描述符来改写需要复用的 @property 方法
 
+- 如果想复用 @property 方法及其验证机制, 那么可以自己定义描述符类
+- WeakKeyDictionary 可以保证描述符类不会泄露内存
+- 通过描述符协议来实现属性的获取和设置操作时, 不要纠结于 __getattribute__ 的方法具体运作细节
 
 """
+from weakref import WeakKeyDictionary
 
 
 class Homework(object):
@@ -60,7 +64,7 @@ class Exam(object):
 
 class Grade(object):
     def __init__(self):
-        self._value = {}
+        self._value = WeakKeyDictionary()
 
     def __get__(self, instance, instance_type):
         if instance is None:
@@ -78,16 +82,14 @@ class Exam2(object):
     writing_grade = Grade()
     science_grade = Grade()
 
-    pass
-
-
-
-
-
 
 if __name__ == '__main__':
     if 1:
         galileo = Homework()
         galileo.grade = 95
-
+    if 1:
+        f_exam = Exam2()
+        s_exam = Exam2()
+        f_exam.writing_grade = 99
+        s_exam.writing_grade = 23
     pass

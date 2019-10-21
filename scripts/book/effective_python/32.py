@@ -82,7 +82,6 @@ class DictionaryDB(object):
         return data_dict[item]
 
 
-
 if __name__ == '__main__':
     if 0:
         data = LazyDB()

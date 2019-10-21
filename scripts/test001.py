@@ -67,6 +67,7 @@ def func(s):
     s = func2(s)
     return s
 
+
 if __name__ == '__main__':
     print(func('vvummmxxxppaaarrrzzeennmmqqqljeecccrpqqquuummjjjqqquuuyyyvviiicccbbimuucqqqnnnrrfffddhslllsssiiiwwwnnlllrrrzzbblwaxxvvvjjjbbbggeemsfglcxxnnnddcccuuuzzlllzzmxxxxxxkkkxxxfffddejjjuuqqxxooniiyyyzz  '))
     n = int(input())

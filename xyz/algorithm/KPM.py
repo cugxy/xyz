@@ -6,6 +6,7 @@
 @time:  2018-11-26
 """
 
+
 def KPM(haystack, needle):
     """
     KPM 算法实现 strStr()
@@ -47,7 +48,7 @@ def KPM(haystack, needle):
         return 0
     _partial_match_table = partial_match_table(needle)
     i = 0
-    while(l_h - i >= l_n):
+    while l_h - i >= l_n:
         if haystack[i] == needle[0]:
             k = 1
             found = True

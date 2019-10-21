@@ -28,32 +28,28 @@ class TreeNode(object):
 
 
 class Solution(object):
-    def __init__(self):
-        self.root = None
-
     def sortedArrayToBST(self, nums):
         """
         :type nums: List[int]
         :rtype: TreeNode
         """
-        self.root = None
-        for num in nums:
-            self.insert(self.root, None, num)
-            embed()
-        return self.root
+        return self.func(nums)
 
-    def insert(self, root, parent, num):
-        if root is None:
+    def func(self, nums):
+        root = None
+        if len(nums) > 1:
+            mid = int(len(nums) / 2)
+            l_nums = nums[:mid]
+            r_nums = nums[mid + 1:]
+            num = nums[mid]
             root = TreeNode(num)
-            if parent is not None:
-                if num < parent.val:
-                    parent.left = root
-                elif num > parent.val:
-                    parent.right = root
-        if num < root.val:
-            self.insert(root.left, root, num)
-        elif num > root.val:
-            self.insert(root.right, root, num)
+            left = self.func(l_nums)
+            right = self.func(r_nums)
+            root.left = left
+            root.right = right
+        elif len(nums) == 1:
+            root = TreeNode(nums[0])
+        return root
 
 
 if __name__ == '__main__':
@@ -61,5 +57,4 @@ if __name__ == '__main__':
     s = Solution()
     p = [-10,-3,0,5,9]
     r = s.sortedArrayToBST(p)
-    embed()
     print(r)

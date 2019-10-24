@@ -13,6 +13,9 @@
 
 
 class XYOrderedDict(dict):
+    """
+    利用双向循环链表实现内存中的排序字典, 其实 collection 中的 OrderDict 就是如此实现.
+    """
 
     def __init__(self, *args, **kwds):
         if len(args) > 1:

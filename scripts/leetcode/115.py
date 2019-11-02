@@ -49,6 +49,91 @@ babgbag
   ^  ^^
 babgbag
     ^^^
-
+思路: 递归解决,
+     递归函数 当第一个匹配上时,
 
 """
+
+
+class SolutionTimeOut:
+    """
+    思路: 递归解决:
+        递归条件,
+    """
+    def numDistinct(self, s: str, t: str) -> int:
+        if not t or not s:
+            return 0
+        return self.fun(s, t, 0, 0)
+
+    def fun(self, s, t, i, j):
+        rs = 0
+        while i < len(s) and j < len(t):
+            if s[i] == t[j]:
+                rs += self.fun(s, t, i + 1, j)
+                j += 1
+            i += 1
+        if j < len(t):
+            return 0
+        return rs + 1
+
+
+class TreeNode:
+    def __init__(self, val, level=-1, parents=None):
+        self.val = val
+        self.level = level
+        self.parents = parents
+
+
+class Solution:
+    def numDistinct(self, s, t):
+        if not t or not s:
+            return 0
+        idxs = []
+        for _t in t:
+            idx = self.get_idx(s, _t)
+            if not idx:
+                continue
+            idxs.append(idx)
+        if not idxs:
+            return 0
+        f_num = {e: 1 for e in idxs[0]}
+        for level in range(len(idxs) - 1):
+            f_idx = idxs[level]
+            n_idx = idxs[level + 1]
+            n_num = {e: 0 for e in n_idx}
+            for i in f_idx:
+                for j in n_idx:
+                    if i < j:
+                        n_num[j] += f_num[i]
+            f_num = n_num
+        rs = sum(f_num.values())
+        return rs
+
+    def get_idx(self, s, k):
+        rs = []
+        for idx, _s in enumerate(s):
+            if _s == k:
+                rs.append(idx)
+        return rs
+
+
+if __name__ == '__main__':
+    ss = Solution()
+    if 1:
+        s = 'babgbag'
+        t = 'bag'
+        print(ss.numDistinct(s, t))
+    if 1:
+        s = 'rabbbit'
+        t = 'rabbit'
+        print(ss.numDistinct(s, t))
+    pass
+
+
+
+
+
+
+
+
+

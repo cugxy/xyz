@@ -9,7 +9,7 @@ import sys
 import traceback
 from functools import wraps
 
-from LiGlobal.util.jsonify_util import return_msg
+from xyflask.util.jsonify_util import return_msg
 
 
 def try_exception(f):

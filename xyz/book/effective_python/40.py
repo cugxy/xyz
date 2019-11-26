@@ -13,9 +13,57 @@
 考虑使用协程来并发的运行多个函数
 
 """
+from collections import namedtuple
 
 
+def xy_coroutine():
+    while True:
+        received = yield
+        print('received:', received)
+
+
+def minimize():
+    cur = yield
+    while True:
+        val = yield cur
+        cur = min(val, cur)
+
+
+Query = namedtuple('Query', ('x', 'y'))
+ALIVE = '*'
+EMPTY = '-'
+
+
+def count_neighbors(y, x):
+    n_ = yield Query(y + 1, x + 0)
+    ne = yield Query(y + 1, x + 1)
+    e_ = yield Query(y + 0, x + 1)
+    se = yield Query(y - 1, x + 1)
+    s_ = yield Query(y - 1, x + 0)
+    sw = yield Query(y - 1, x - 1)
+    w_ = yield Query(y + 0, x - 1)
+    nw = yield Query(y + 1, x - 1)
+    nei = [n_, ne, e_, se, s_, sw, w_, nw, ]
+    count = 0
+    for s in nei:
+        if s == ALIVE:
+            count += 1
+    return count
 
 
 if __name__ == '__main__':
-    pass
+    if 0:
+        it = xy_coroutine()
+        next(it)
+        it.send('First')
+        it.send('Second')
+        pass
+    if 1:
+        it = minimize()
+        next(it)
+        print(it.send(10))
+        print(it.send(20))
+        print(it.send(30))
+        print(it.send(-10))
+        print(it.send(120))
+        print(it.send(-1210))

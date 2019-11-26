@@ -85,6 +85,9 @@ class TreeNode:
 
 
 class Solution:
+    """
+    得到 t 中每一个字符在 s 中的 index , 并组成一棵树, 然后 裁剪该树, 即可得到结果
+    """
     def numDistinct(self, s, t):
         if not t or not s:
             return 0

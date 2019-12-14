@@ -2,7 +2,6 @@
 9.6 及其之后版本支持
 
 ## 并行扫描
-### 并行顺序扫描
 
 - 创建测试表
     ```
@@ -10,13 +9,18 @@
 
     insert into test_big1(id, name) select n, n||'_test' from generate_series(1, 50000000) n;
     ```
+
+### 并行顺序扫描
+- 查询语句
+    ```
+    explain analyze select * from test_big1 where name = '1_test';
+    ```
+
 - 结果对比
     ```
-    chp6=# set max_parallel_workers_per_gather = 0;
-    SET
-    chp6=# explain analyze select * from test_big1 where name = '1_test';
-                                                    QUERY PLAN
-    ------------------------------------------------------------------------------------------------------------
+    # 非并行
+    QUERY PLAN
+    ---------------------------------------------------------------------------------------------
     Seq Scan on test_big1  (cost=0.00..991638.65 rows=1 width=25) (actual time=0.517..5385.317 rows=1 loops=1)
     Filter: ((name)::text = '1_test'::text)
     Rows Removed by Filter: 49999999
@@ -24,13 +28,9 @@
     Execution time: 5385.328 ms
     (5 行记录)
 
-
-    chp6=# set max_parallel_workers_per_gather = 4;
-    SET
-    chp6=# explain analyze select * from test_big1 where name = '1_test';
-                                                            QUERY PLAN
-
-    ------------------------------------------------------------------------------------------------------------------------------
+    # 并行
+    QUERY PLAN
+    ---------------------------------------------------------------------------------------------
     Gather  (cost=1000.00..523907.76 rows=1 width=25) (actual time=1.649..1890.737 rows=1 loops=1)
     Workers Planned: 4
     Workers Launched: 4
@@ -48,11 +48,13 @@
     ```
     create index idx_test_big1_id on test_big1 using btree (id);
     ```
+- 查询语句
+    ```
+    explain analyze select count(name) from test_big1 where id < 10000000;
+    ```
 - 结果对比
     ```
-    chp6=# set max_parallel_workers_per_gather = 0;                                              
-    SET                                                                                                                                                               
-    chp6=# explain analyze select count(name) from test_big1 where id < 10000000;               
+    # 非并行
     QUERY PLAN                                                                                   
     --------------------------------------------------------------------------------------------
     Aggregate  (cost=380583.48..380583.50 rows=1 width=8) (actual time=2672.560..2672.560 rows=1 loops=1)                                                                     
@@ -62,14 +64,12 @@
     Execution time: 2672.593 ms                                                                                                                                               
     (5 行记录) 
 
-    chp6=# set max_parallel_workers_per_gather = 4;                                           
-    SET 
-    chp6=# explain analyze select count(name) from test_big1 where id < 10000000;                
+    # 并行            
     QUERY PLAN                                                                                 
     ---------------------------------------------------------------------------------------------
     Finalize Aggregate  (cost=288429.73..288429.74 rows=1 width=8) (actual time=947.498..947.498 rows=1 loops=1)                                                              
     ->  Gather  (cost=288429.31..288429.72 rows=4 width=8) (actual time=947.403..947.495 rows=5 loops=1)                                                                    
-            Workers Planned: 4                                                                                                                                                
+            Workers Planned: 4                                                                   
             Workers Launched: 4                                                                                                                                               
             ->  Partial Aggregate  (cost=287429.31..287429.32 rows=1 width=8) (actual time=833.994..833.994 rows=1 loops=5)                                                   
                 ->  Parallel Index Scan using idx_test_big1_id on test_big1  (cost=0.56..281219.03 rows=2484112 width=13) (actual time=0.174..722.775 rows=2000000 loops=5) 
@@ -80,11 +80,13 @@
     ```
 
 ### 并行 index-only 扫描
+- 查询语句
     ```
-    chp6=# set max_parallel_workers_per_gather = 0;
-    SET
-
-    chp6=# explain analyze select count(*) from test_big1 where id < 10000000;
+    explain analyze select count(*) from test_big1 where id < 10000000;
+    ```
+- 结果对比
+    ```
+    # 非并行
     QUERY PLAN
     ---------------------------------------------------------------------------------------------
     Aggregate  (cost=380583.48..380583.50 rows=1 width=8) (actual time=2692.676..2692.677 rows=1 loops=1)
@@ -95,12 +97,7 @@
     Execution time: 2692.723 ms
     (6 行记录)
 
-
-    chp6=# set max_parallel_workers_per_gather = 4;
-    SET
-
-
-    chp6=# explain analyze select count(*) from test_big1 where id < 10000000;
+    # 并行
     QUERY PLAN
     ---------------------------------------------------------------------------------------------
     Finalize Aggregate  (cost=288429.73..288429.74 rows=1 width=8) (actual time=928.800..928.800 rows=1 loops=1)
@@ -117,11 +114,13 @@
     ```
 
 ### 并行 bitmap heap 扫描
+- 查询语句
     ```
-    chp6=# set max_parallel_workers_per_gather = 0;
-    SET
-
-    chp6=# explain analyze select * from test_big1 where id = 1 or id = 2;
+    explain analyze select * from test_big1 where id = 1 or id = 2;
+    ```
+- 结果对比
+    ```
+    # 非并行
     QUERY PLAN
     ---------------------------------------------------------------------------------------------
     Bitmap Heap Scan on test_big1  (cost=9.15..17.16 rows=2 width=25) (actual time=0.014..0.015 rows=2 loops=1)
@@ -136,10 +135,7 @@
     Execution time: 0.060 ms
     (10 行记录)
 
-    chp6=# set max_parallel_workers_per_gather = 4;
-    SET
-
-    chp6=# explain analyze select * from test_big1 where id = 1 or id = 2;
+    # 并行
     QUERY PLAN
     ---------------------------------------------------------------------------------------------
     Bitmap Heap Scan on test_big1  (cost=9.15..17.16 rows=2 width=25) (actual time=0.089..0.103 rows=2 loops=1)
@@ -153,4 +149,56 @@
     Planning time: 0.110 ms
     Execution time: 0.133 ms
     (10 行记录)
+    ```
+
+## 多表关联
+
+- 创建测试表
+
+    ```
+    create table if not exists test_samll(id int4, name character varying(32));
+
+    insert into test_samll(id, name) select n, n||'_samll' from generate_series(1, 8000000) n;
+
+    create index idx_test_samll_id on test_samll using btree (id);
+    ```
+### Nested loop 多表关联
+
+- 查询语句
+    ```
+    explain analyze select test_samll.name from test_big1, test_samll where test_big1.id = test_samll.id and test_samll.id < 10000;
+    ```
+- 结果对比
+    ```
+    # 非并行
+    QUERY PLAN
+    ---------------------------------------------------------------------------------------------
+    Nested Loop  (cost=1.00..85597.76 rows=10153 width=13) (actual time=0.013..19.101 rows=9999 loops=1)
+    ->  Index Scan using idx_test_samll_id on test_samll  (cost=0.43..358.11 rows=10153 width=17) (actual time=0.007..1.472 rows=9999 loops=1)
+            Index Cond: (id < 10000)
+    ->  Index Only Scan using idx_test_big1_id on test_big1  (cost=0.56..8.39 rows=1 width=4) (actual time=0.001..0.002 rows=1 loops=9999)
+            Index Cond: (id = test_samll.id)
+            Heap Fetches: 9999
+    Planning time: 0.160 ms
+    Execution time: 19.337 ms
+    (8 行记录)
+
+    # 并行
+    QUERY PLAN
+    ---------------------------------------------------------------------------------------------
+    Gather  (cost=1191.68..54870.81 rows=10153 width=13) (actual time=1.500..149.400 rows=9999 loops=1)
+    Workers Planned: 3
+    Workers Launched: 3
+    ->  Nested Loop  (cost=191.68..52855.51 rows=3275 width=13) (actual time=0.163..4.922 rows=2500 loops=4)
+            ->  Parallel Bitmap Heap Scan on test_samll  (cost=191.12..25360.20 rows=3275 width=17) (actual time=0.158..0.434 rows=2500 loops=4)
+                Recheck Cond: (id < 10000)
+                Heap Blocks: exact=55
+                ->  Bitmap Index Scan on idx_test_samll_id  (cost=0.00..188.58 rows=10153 width=0) (actual time=0.490..0.490 rows=9999 loops=1)
+                        Index Cond: (id < 10000)
+            ->  Index Only Scan using idx_test_big1_id on test_big1  (cost=0.56..8.39 rows=1 width=4) (actual time=0.001..0.002 rows=1 loops=9999)
+                Index Cond: (id = test_samll.id)
+                Heap Fetches: 9999
+    Planning time: 0.221 ms
+    Execution time: 163.449 ms
+    (8 行记录)
     ```

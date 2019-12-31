@@ -10,11 +10,22 @@
 - 持久性: 一个事务完成后, 即使数据库发生故障, 他对数据库的改变应该永久保存在数据库中, 由预写日志和数据库管理系统的恢复子系统保证
 
 ### 并发引起现象
-- 脏读: Dirty read 当第一个事务读取了第二个事务中已经修改但还未提交的数据, 包括 insert, update, delete, 当第二个事务不提交并执行 rollback 后, 第一个事务所读到的数据时不正确的, 即为 脏读.
-    ```
-    
-    ```
+- 脏读: Dirty read 当事务A 读取了事务B 中已经修改但还未提交的数据, 包括 insert, update, delete, 当事务B 不提交并执行 rollback 后, 事务A 所读到的数据时不正确的, 即为 脏读.
+- 不可重复读: Non-repeatable read 当事务A 第一次读取数据之后, 被读取的数据被已提交的事务B 进行了修改, 事务A 再次读取这些数据时发现数据已被事务B 修改, 两次查询结果不一致, 即为 不可重复读
+- 幻读: Phantom read 指一个事务两次查询的结果集记录数不一致, 如 事务A 根据范围条件查询一些数据, 事务B 却在此时插入或删除了部分数据, 事务A 在接下来的查询中, 会发现有些数据与之前查询结果不一致, 即为 幻读, 幻读可以认为是受 INSERT 和 DELETE 影响的 不可重复读 的一种特殊场景.
+- 序列化异常: Serialization anomaly 指成功提交的一组事务的执行结果与这些事务按照串行执行方式的执行结果不一致.
 
-- 不可重复读: Non-repeatable read
-- 幻读: Phantom read
-- 序列化异常: Serialization anomaly
+### ANSI SQL 标准的事务隔离级别
+
+为了避免事务之间并发执行的副作用, ANSI SQL 标准定义了四类隔离级别.
+
+- Read Uncommitted: 所有事务都可以看到其他未提交事务的执行结果. 
+- Read Committed: 满足一个事务只能看见已经提交事务对关联数据所做的改变的隔离需求.
+- Repeatable Read: 确保同一事务的多个实例在并发读取数据时, 会看到同样的数据行.
+- Serializable: 每个读取数据上加上共享锁.
+
+### PostgreSQL 事务隔离级别
+SQL 标准定义的四种隔离级别只定义了哪种现象不能发送, 描述了每种隔离级别必须提供的最小保护, 但是没有定义哪种现象必须发生. 因此在PostgreSQL 中只实现了三种不同的隔离级别:
+- Read Uncommitted 与 Read Committed 一致
+- Repeatable Read 不允许出现幻读
+- Serializable 不允许序列化异常

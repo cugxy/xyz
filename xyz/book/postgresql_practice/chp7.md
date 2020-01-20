@@ -24,8 +24,92 @@
 - Repeatable Read: 确保同一事务的多个实例在并发读取数据时, 会看到同样的数据行.
 - Serializable: 每个读取数据上加上共享锁.
 
-### PostgreSQL 事务隔离级别
+## PostgreSQL 事务隔离级别
 SQL 标准定义的四种隔离级别只定义了哪种现象不能发送, 描述了每种隔离级别必须提供的最小保护, 但是没有定义哪种现象必须发生. 因此在PostgreSQL 中只实现了三种不同的隔离级别:
 - Read Uncommitted 与 Read Committed 一致
 - Repeatable Read 不允许出现幻读
 - Serializable 不允许序列化异常
+
+### PostgreSQL 事务隔离级别查看设置
+- 查看全局事务隔离级别
+```
+select name, setting from pg_settings where name='default_transaction_isolation';
+
+select current_setting('default_transaction_isolation');
+```
+- 设置全局事务隔离级别
+```
+alter system set default_transaction_isolation to 'REPEATABLE READ';
+
+select pg_reload_conf();
+```
+- 查看当前会话事务隔离级别
+```
+show transaction_isolation;
+
+select current_setting('transaction_isolation');
+```
+- 设置当前会话事务隔离级别
+```
+set session characteristics as transaction isolation level read uncommitted;
+```
+- 设置当前事务事务隔离级别
+```
+start transaction isolation level read committed;
+...
+end;
+
+begin isolation read committed;
+...
+end;
+```
+
+## PostgreSQL 并发控制
+数据库管理系统中并发控制的任务便是确保在多个事务同时存取数据库中同一数据时不破坏事务的隔离性, 数据的一致性以及数据库的一致性, 即解决 丢失更新, 脏读, 不可重复读, 幻读, 序列化异常的问题.
+
+并发控制模型:
+- 基于锁的并发控制: Lock-Based Concurrency Control
+- 基于多版本的并发控制: Multi-Version Concurrency Control
+
+并发控制手段:
+- 乐观锁: 乐观并发控制
+- 悲观锁: 悲观并发控制
+
+### 基于锁的并发控制
+- 排它锁(Exclusive locks X锁): 被加锁的对象只能被持有锁的事务读取和修改, 其他事务无法在该对象上加其他锁, 也不能读取和修改该对象.
+- 共享锁(Share locks S锁): 被加锁的对象可以被持锁事务读取, 但不能被修改, 其他事务也可以在上面加共享锁.
+- 封锁粒度: 封锁对象大小. 可以是 属性值, 属性值集合, 元组, 关系, 索引项, 整个索引, 整个数据库, 页, 物理记录
+
+### 基于多版本的并发控制
+MVCC(基于多版本并发控制)通过保存数据在某个时间点的快照, 并控制元组的可见性来实现并发控制, 快照记录 READ COMMITED 事务隔离级别的事务中的每条 SQL 语句的开头和 SERIAIZABLE 事务隔离级别的事务开始时的元组的可见性. 一个事务无论运行多长时间, 在同一个事务里都能够看到一致的数据. PostgreSQL 为每一个事务分配一个递增的, int32 整形数作为事务 ID, 称为 xid, 创建一个新的快照时, 将收集当前正在执行的事务 id 和已提交的最大事务 id.
+
+PostgreSQL 还在系统里的每一行记录上都存储了事务相关信息, 这被用来判断某一行记录对于当前事务是否可见. PostgreSQL 内部数据结构中, 每个元组(行记录)有 4 个与事务可见性相关的隐藏列, 分别时 xmin, xman, cmin, cmax, 其中 cmin, cmax 分别是插入和删除该元组的命令在事务中的命令序列标识, xmin, xmax 与事务对其他事务的可见性相关, 用于同一个事务中的可见性判断.
+
+- xmin 决定元组对事务的可见性
+  - 由回滚的事务或未提交的事务创建的元组, 对于其他任何事务都是不可见的.
+  - 无论事务提交或是回滚, xid 都会递增, 对于 Repeatable Read 和 Serializable 隔离级别的事务 A, 如果其 xid 小于事务 B 的 xid, 也就是说事务 A 创建的元组的 xmin 小于事务 B 的xid, 则元组对于事务 B 不可见.
+
+- xmax 决定事务的可见性 ()
+  - 如果没有 xmax 值, 则元组对其他事务可见.
+  - 如果被设置为 ROLLBACK 或正在运行且未 COMMIT 的事务的 xid, 则元组对其他事务可见.
+  - 如果被设置未一个已 COMMIT 的事务的 xid, 则该元组对 xid 大于该事务的事务不可见.
+
+### 使用 pageinspect 观察 MVCC
+```
+-- 创建扩展
+CREATE EXTENSION pageinspect;
+
+-- 创建视图
+DROP VIEW IF EXISTS v_pageinspect;
+CREATE VIEW v_pageinspect AS 
+SELECT '(0, ' || lp || ')' AS ctid,
+    CASE lp_flags
+        WHEN 0 THEN 'Unused'
+        WHEN 1 THEN 'Normal'
+        WHEN 2 THEN 'Redirect to ' || lp_off
+        WHEN 3 THEN 'Dead'
+    END;
+FROM heap_page_items(get_raw_page('tb1_mvcc', 0))
+ORDER BY lp;
+
+```

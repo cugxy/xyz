@@ -108,7 +108,10 @@ SELECT '(0, ' || lp || ')' AS ctid,
         WHEN 1 THEN 'Normal'
         WHEN 2 THEN 'Redirect to ' || lp_off
         WHEN 3 THEN 'Dead'
-    END;
+    END,
+    t_xmin::text::int8 AS xmin,
+    t_xmax::text::int8 AS xmax,
+    t_ctid
 FROM heap_page_items(get_raw_page('tb1_mvcc', 0))
 ORDER BY lp;
 

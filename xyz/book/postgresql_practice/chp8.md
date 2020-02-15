@@ -119,9 +119,26 @@ END;
 $function$;
 
 -- 定义父表 insert 触发器
+
 CREATE TRIGGER insert_log_ins_trigger BEFORE INSERT ON log_ins FOR EACH ROW EXECUTE PROCEDURE log_ins_insert_trigger();
 
 ```
+同时添加 DELETE, UPDATA 触发器和函数.
+
+### 注意
+父表和子表都可以定义主键约束, 但会存在一个问题, 由于父表和子表的主键约束是分别创建的, 那么可能在父表和子表中存在重复的主键数据, 这对整个分区表来说做不到主键唯一.
+
+### 使用分区表
+- 查询父表 OR 子表
+  - 使用 `ONLY` 可只查询父表, 不使用则查询整个分区
+  - 直接查询子表性能上有一定提升, 高并发时将更加明显, 所以不建议直接查询父表.
+  
+- constraint_exclusion 参数
+  constraint_exclusion 参数控制优化器是否根据表上的约束来优化查询.
+  - on: 所有表都通过约束优化查询
+  - off: 所有表都不通过约束优化
+
+
 
 
 

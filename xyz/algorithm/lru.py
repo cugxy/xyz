@@ -1,9 +1,14 @@
-#!usr/bin/env python  
-# -*- coding:utf-8 _*-
-""" 
-@author:cugxy 
-@file: LRU.py 
-@time: 2019/07/23 
+# -*- coding: utf-8 -*-
+"""
+-------------------------------------------------
+   File Name：     lru.py
+   Description :
+   Author :       cugxy
+   date：          2019/7/23 0019
+-------------------------------------------------
+   Change Activity:
+                   2019/7/23 0019:
+-------------------------------------------------
 """
 
 
@@ -76,9 +81,9 @@ class LRUCache(object):
 
     def _remove(self, node):
         pre = node.pre
-        next = node.next
-        pre.next = next
-        next.pre = pre
+        _next = node.next
+        pre.next = _next
+        _next.pre = pre
 
     def _move_to_head(self, node):
         self._remove(node)
@@ -88,7 +93,3 @@ class LRUCache(object):
         res = self.tail.pre
         self._remove(res)
         return res
-
-
-if __name__ == '__main__':
-    pass

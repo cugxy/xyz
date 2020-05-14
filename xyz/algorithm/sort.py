@@ -1,13 +1,19 @@
-#!usr/bin/env python  
-# -*- coding:utf-8 _*-
-""" 
-@author:$USER
-@file: $NAME 
-@time: $YEAR/$MONTH/$DAY
+# -*- coding: utf-8 -*-
+"""
+-------------------------------------------------
+   File Name：     sort.py
+   Description :
+   Author :       cugxy
+   date：          2019/7/23 0019
+-------------------------------------------------
+   Change Activity:
+                   2019/7/23 0019:
+-------------------------------------------------
 """
 
 
 def swap(lst, i, j):
+    """交换"""
     tmp = lst[i]
     lst[i] = lst[j]
     lst[j] = tmp
@@ -58,19 +64,32 @@ def insert_sort(lst, compare_fun):
             p_idx -= 1
         lst[p_idx+ 1] = val
     return True
- 
+
 
 def shell_sort(lst):
+    """
+    希尔排序
+    :param lst:
+    :return:
+    """
     pass
 
 
 def quick_sort(lst, r, l, compare_fun):
+    """
+    快速排序
+    :param lst:
+    :param r:
+    :param l:
+    :param compare_fun:
+    :return:
+    """
     if not lst or not r or not l or not compare_fun:
         return False
     if l < r:
         return False
 
-    def partition(lst, l, r):
+    def _partition(lst, l, r):
         x = lst[r]
         i = l - 1
         for j in range(l, r):
@@ -82,17 +101,8 @@ def quick_sort(lst, r, l, compare_fun):
 
     def _quick_sort(lst, l, r):
         if l < r:
-            q = partition(lst, l, r)
+            q = _partition(lst, l, r)
             _quick_sort(lst, l, q - 1)
             _quick_sort(lst, q + 1, r)
     _quick_sort(lst, r, l)
     return True
-
-
-if __name__ == '__main__':
-    if 1:
-        lst = [1, 3]
-        print(lst)
-        swap(lst, 0, 1)
-        print(lst)
-

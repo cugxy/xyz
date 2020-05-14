@@ -11,17 +11,18 @@ from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cache import Cache
+from flask_cache import Cache
 from flask_celery import Celery
 
 from xyflask.server.config import config
 from xyflask.database import models
 
-cache = Cache()
 db = models.db
 sdb = SQLAlchemy()  # 数据库db
 
 login_manager = models.login_manager
 celery = Celery()
+cache = Cache()
 
 
 def create_app(config_name):
@@ -34,6 +35,14 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    @app.before_first_request
+    def create_tables():
+        cache.clear()
+        if app.config['DEBUG']:
+            return
+        db.create_all()
+
+    gzip = Gzip(app)
     cache.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)

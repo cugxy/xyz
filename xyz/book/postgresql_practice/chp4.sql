@@ -6,6 +6,7 @@ with recursive t (x) as (
 	from t
 	where x < 5
 )
+
 -- union 合并结果集合
 select * from t;
 

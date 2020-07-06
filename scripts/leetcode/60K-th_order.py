@@ -62,7 +62,10 @@ class Solution:
             idx = int(kf)
             rs.append(num[idx])
             num.pop(idx)
-            k = k - f
+            if kf == int(kf):
+                k = f
+            else:
+                k = k - f * idx
             n_ = n_ - 1
             if k <= 0:
                 break
@@ -77,6 +80,6 @@ class Solution:
 if __name__ == '__main__':
     if 1:
         s = Solution()
-        r = s.getPermutation(4, 9)
+        r = s.getPermutation(3, 5)
         print(r)
 

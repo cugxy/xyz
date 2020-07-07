@@ -49,3 +49,5 @@ Datum *extractQuery(Datum query, int32 *nkeys, StrategyNumber n, bool **pmatch, 
 extractQuery通过参数n指定的操作符策略号来决定query的数据类型以及需要提取的键值，返回键值数组的长度存放在nkeys参数中。如果query中不包含键值，则nkeys可以为0或者-1：nkeys = 0 表示索引中所有值都满足查询，将执行完全索引扫描(查询null时是这样); nkeys = -1 表示索引中没有键值满足查询，跳过索引扫描。
 
 
+
+

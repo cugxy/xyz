@@ -64,7 +64,7 @@ def insert_sort(lst, compare_fun):
         while p_idx >= 0 and compare_fun(lst[p_idx], val) > 0:
             lst[p_idx + 1] = lst[p_idx]
             p_idx -= 1
-        lst[p_idx+ 1] = val
+        lst[p_idx + 1] = val
     return True
 
 
@@ -72,7 +72,20 @@ def shell_sort(lst, compare_fun):
     """
     希尔排序
     """
-    pass
+    if not lst:
+        return False
+    l = len(lst)
+    step = l // 2                   # 步长
+    while step > 0:
+        for i in range(step, l):        # 跳一个 step 的插入排序
+            val = lst[i]
+            j = i
+            while j >= 0 and j - step >= 0 and compare_fun(lst[j - step], val) > 0:
+                lst[j] = lst[j - step]
+                j -= step
+            lst[j] = val
+        step = step // 2
+    return True
 
 
 def quick_sort(lst, r, l, compare_fun):
@@ -108,20 +121,3 @@ def quick_sort(lst, r, l, compare_fun):
             _quick_sort(lst, q + 1, r)
     _quick_sort(lst, r, l)
     return True
-
-
-if __name__ == '__main__':
-    if 1:
-        lst = [4, 7, 2, 1, 3, 9, 6]
-
-        def f(a, b):
-            if a > b:
-                return 1
-            elif a == b:
-                return 0
-            else:
-                return -1
-
-        quick_sort(lst, 0, 6, f)
-        # insert_sort(lst, f)
-        print(lst)

@@ -79,7 +79,7 @@ class KPMSolution:
             return 0
         partial_match_table = self.get_partial_match_table(needle)
         i = 0
-        while(l_h - i >= l_n):
+        while l_h - i >= l_n:
             if haystack[i] == needle[0]:
                 k = 1
                 found = True

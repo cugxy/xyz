@@ -7,6 +7,7 @@
 
 using std::cout;
 using std::endl;
+using std::wcout;
 
 void init()
 {
@@ -79,6 +80,32 @@ void hexoct()
     cout << "n1:" << n3 << "(octal)" << endl;
 }
 
+void unicode()
+{
+    cout << endl;
+    cout << "Let them eat g\u00E2teau.\n";
+}
+
+void wchart()
+{
+    // 用 L 前缀来标识 wchar_t
+    // wcin 和 wcout 则可处理 wchar_t 类型的输入输出流.
+    wchar_t b = L'P';
+    wcout << L"tall" << endl;
+    // 用 u 前缀标识 char16_t (无符号 16 位) 用 U 前缀标识 char32_t (无符号 32 位)
+    char16_t ch1 = u'q';
+    char32_t ch2 = U'\U0000222B';
+}
+
+void BOOL_()
+{
+    cout << endl;
+    int ans = true;
+    int pro = false;
+    cout << ans << ' ' << pro << endl;
+}
+
+
 
 int main()
 {
@@ -86,5 +113,8 @@ int main()
     limit();
     exceed();
     hexoct();
+    unicode();
+    wchart();
+    BOOL_();
     return 0;
 }

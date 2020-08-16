@@ -16,7 +16,7 @@ namespace cugxy
 * \author	xy
 */
     template<class E>
-    class DATASTRUCT_LIBRARY_EXPORT PQueue {
+    class PQueue {
     protected:
         E * m_pElements;    /**< 数组存储方式 */
         int m_nCount;       /**< 元素个数 */
@@ -61,5 +61,6 @@ namespace cugxy
     };
 
 
+    template class DATASTRUCT_LIBRARY_EXPORT PQueue<int>;
 };
 #endif //CPPLIB_PRIORITY_QUEUE_H

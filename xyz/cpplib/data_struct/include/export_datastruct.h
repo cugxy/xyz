@@ -8,8 +8,7 @@
 #if defined(DATASTRUCT_LIBRARY)
 #define DATASTRUCT_LIBRARY_EXPORT __declspec(dllexport)
 #else
-#define DATASTRUCT_LIBRARY_EXPORT
+#define DATASTRUCT_LIBRARY_EXPORT __declspec(dllimport)
 # endif
-
 
 #endif //CPPLIB_EXPORT_DATASTRUCT_H

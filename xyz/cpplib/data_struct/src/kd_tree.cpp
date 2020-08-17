@@ -40,9 +40,10 @@ KDNode<E> *KDTree<E>::createTreeNode(int left, int right, int dim) {
     if (right < left)
         return nullptr;
     m_nCurDim = dim;
-    // sort(m_Data.begin() + left, m_Data.begin() + right+1, this->compare);
-    //@todo: 按照 m_nCCurDim 进行排序
-
+    sort(m_Data.begin() + left,
+         m_Data.begin() + right+1,
+         [this](const vector<int> &a, const vector<int> &b) {return a[m_nCurDim] < b[m_nCurDim]; }
+    );
     int mid = (left + right+1) / 2;
     auto *r = new KDNode<E>(m_Data[mid], dim);
     r->pLeft = createTreeNode(left, mid - 1, (dim + 1) % m_nDimension);

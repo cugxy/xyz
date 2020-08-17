@@ -14,6 +14,8 @@
 
 def swap(lst, i, j):
     """交换"""
+    if i == j:
+        return
     tmp = lst[i]
     lst[i] = lst[j]
     lst[j] = tmp
@@ -43,7 +45,7 @@ def select_sort(lst, compare_fun):
     for i in range(l):
         m_idx = i
         for j in range(i + 1, l):
-            if compare_fun(lst[j], lst[m_idx]) < 0:
+            if compare_fun(lst[m_idx], lst[j]) > 0:
                 m_idx = j
         swap(lst, i, m_idx)
     return True
@@ -56,23 +58,34 @@ def insert_sort(lst, compare_fun):
     if not lst:
         return False
     l = len(lst)
-    for i in range(l):
+    for i in range(1, l):
         p_idx = i - 1
         val = lst[i]
         while p_idx >= 0 and compare_fun(lst[p_idx], val) > 0:
             lst[p_idx + 1] = lst[p_idx]
             p_idx -= 1
-        lst[p_idx+ 1] = val
+        lst[p_idx + 1] = val
     return True
 
 
-def shell_sort(lst):
+def shell_sort(lst, compare_fun):
     """
     希尔排序
-    :param lst:
-    :return:
     """
-    pass
+    if not lst:
+        return False
+    l = len(lst)
+    step = l // 2                   # 步长
+    while step > 0:
+        for i in range(step, l):        # 跳一个 step 的插入排序
+            val = lst[i]
+            j = i
+            while j >= 0 and j - step >= 0 and compare_fun(lst[j - step], val) > 0:
+                lst[j] = lst[j - step]
+                j -= step
+            lst[j] = val
+        step = step // 2
+    return True
 
 
 def quick_sort(lst, r, l, compare_fun):
@@ -84,20 +97,22 @@ def quick_sort(lst, r, l, compare_fun):
     :param compare_fun:
     :return:
     """
-    if not lst or not r or not l or not compare_fun:
+    if not lst or not compare_fun:
         return False
     if l < r:
         return False
 
     def _partition(lst, l, r):
-        x = lst[r]
-        i = l - 1
-        for j in range(l, r):
-            if compare_fun(lst[j], x) <= 0:
-                i += 1
-                lst[i], lst[j] = lst[j], lst[i]
-        lst[i + 1], lst[r] = lst[r], lst[i+1]
-        return i + 1
+        x = lst[l]                              # 基准数
+        idx = l + 1                             # 遍历 index
+        i = idx
+        while i <= r:                           # 确定基准应当放置的位置
+            if compare_fun(x, lst[i]) > 0:
+                swap(lst, i, idx)               # 将大数向后移动
+                idx += 1                        # 定位 基准数应当放置的位置
+            i += 1
+        swap(lst, l, idx - 1)                   # 移动基准数到指定位置, 此时 基准数左边都小于基准数, 右边均大于基准数
+        return idx - 1                          # 返回基准数位置
 
     def _quick_sort(lst, l, r):
         if l < r:

@@ -9,6 +9,8 @@
    Change Activity:
                    2019/5/19 0019:
 -------------------------------------------------
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。
+
 前缀: 除了最后一个字符以外, 一个字符串的全部头部组合
 后缀: 除了第一个字符意外, 一个字符串的全部尾部组合
 如:
@@ -84,17 +86,17 @@ def KPM(haystack, needle):
         return 0
     _partial_match_table = partial_match_table(needle)
     i = 0
-    while l_h - i >= l_n:
-        if haystack[i] == needle[0]:
+    while l_h - i >= l_n:                                           # 长串遍历
+        if haystack[i] == needle[0]:                                # 如果当前字符串相等
             k = 1
             found = True
-            for k in range(1, l_n):
-                if i + k >= l_h or haystack[i + k] != needle[k]:
-                    found = False
+            for k in range(1, l_n):                                 # 遍历子串
+                if i + k >= l_h or haystack[i + k] != needle[k]:    # 如果元素不相等
+                    found = False                                   # 设置 found flag
                     break
-            if found:
+            if found:                                               # found flag 为 True 则表示找到了
                 return i
-            i = i + k - _partial_match_table[k - 1]
+            i = i + k - _partial_match_table[k - 1]                 # 根据 部分匹配表 移动长串遍历 index
         else:
-            i = i + 1
+            i = i + 1                                               # 当前字符串不相等, 移动 index + 1
     return -1

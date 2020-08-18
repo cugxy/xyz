@@ -7,7 +7,7 @@
 
 namespace cugxy
 {
-    const int knDefaultTSize = 10;
+    const int knDefaultTSize = 50;
 
     /**
     * \brief 最小堆

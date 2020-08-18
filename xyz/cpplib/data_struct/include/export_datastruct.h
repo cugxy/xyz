@@ -5,10 +5,10 @@
 #ifndef CPPLIB_EXPORT_DATASTRUCT_H
 #define CPPLIB_EXPORT_DATASTRUCT_H
 
-#if defined(DATASTRUCT_LIBRARY)
-#define DATASTRUCT_LIBRARY_EXPORT __declspec(dllexport)
+#if defined(DATA_STRUCT_LIBRARY)
+#define DATA_STRUCT_LIBRARY_EXPORT __declspec(dllexport)
 #else
-#define DATASTRUCT_LIBRARY_EXPORT __declspec(dllimport)
+#define DATA_STRUCT_LIBRARY_EXPORT __declspec(dllimport)
 # endif
 
 #endif //CPPLIB_EXPORT_DATASTRUCT_H

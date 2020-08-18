@@ -61,6 +61,6 @@ namespace cugxy
     };
 
 
-    template class DATASTRUCT_LIBRARY_EXPORT PQueue<int>;
+    template class DATA_STRUCT_LIBRARY_EXPORT PQueue<int>;
 };
 #endif //CPPLIB_PRIORITY_QUEUE_H

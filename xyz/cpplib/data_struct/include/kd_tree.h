@@ -75,8 +75,8 @@ namespace cugxy{
         return os;
     }
 
-    template class DATASTRUCT_LIBRARY_EXPORT KDNode<int>;
-    template class DATASTRUCT_LIBRARY_EXPORT KDTree<int>;
+    template class DATA_STRUCT_LIBRARY_EXPORT KDNode<int>;
+    template class DATA_STRUCT_LIBRARY_EXPORT KDTree<int>;
 
 };
 

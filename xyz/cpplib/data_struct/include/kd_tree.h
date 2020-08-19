@@ -39,18 +39,17 @@ namespace cugxy{
     class KDTree {
     protected:
         int                 m_nDimension;
-        int                 m_nCurDim;
         vector<vector<E> >  m_Data;
         KDNode<E> *         m_pRoot;
 
     private:
         void createTree();
 
-        bool compare(const vector<E> &a, const vector<E> &b);
+        int calSplitDim(int left, int right);
 
         int disVector(const vector<E> &a, const vector<E> &b);
 
-        KDNode<E> * createTreeNode(int left, int right, int dim);
+        KDNode<E> * createTreeNode(int left, int right);
 
         void printTreeNode(KDNode<E> *r);
 

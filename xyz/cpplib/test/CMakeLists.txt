@@ -1,6 +1,6 @@
 project("test")
 
-SET(LIBRARY_OUTPUT_PATH ${PROJECT_INCLUDE}/bin)
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_INCLUDE}/bin)
 
 file(GLOB_RECURSE files *.cpp *.h)
 

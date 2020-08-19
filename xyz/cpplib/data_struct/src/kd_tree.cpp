@@ -5,6 +5,8 @@
 #include "kd_tree.h"
 #include <climits>
 #include <algorithm>
+#include <numeric>
+#include <cmath>
 
 using std::sort;
 using std::min;
@@ -21,35 +23,60 @@ KDTree<E>::KDTree(vector<vector<E>> data, int dim)
 }
 
 template<class E>
-KDTree<E>::~KDTree() {
+KDTree<E>::~KDTree() = default;
 
+
+template<class E>
+int KDTree<E>::calSplitDim(int left, int right)
+{
+    if (left == right)
+        return 0;
+    double maxStd = 0.0;
+    int rsDim = 0;
+    for (int i = 0; i < m_nDimension; ++i)
+    {
+        vector<E> tmpLst;
+        for (auto it = m_Data.begin() + left; it != m_Data.begin() + right + 1; ++it)
+        {
+            auto tmpData = *it;
+            tmpLst.push_back(tmpData[i]);
+        }
+        E sum = std::accumulate(std::begin(tmpLst), std::end(tmpLst), 0.0);
+        E mean = sum / tmpLst.size();
+        E accum;
+        std::for_each(std::begin(tmpLst), std::end(tmpLst), [&](const E d){
+            accum += ((d - mean) * (d - mean));
+        });
+        double stdev = std::sqrt(accum / (tmpLst.size()));
+        if (stdev > maxStd)
+        {
+            maxStd = stdev;
+            rsDim = i;
+        }
+    }
+    return rsDim;
 }
 
 template<class E>
 void KDTree<E>::createTree() {
-    m_pRoot = createTreeNode(0, m_Data.size()-1, 0);
+    m_pRoot = createTreeNode(0, m_Data.size() - 1);
 }
 
 template<class E>
-bool KDTree<E>::compare(const vector<E> &a, const vector<E> &b) {
-    return a[m_nCurDim] < b[m_nCurDim];
-}
-
-template<class E>
-KDNode<E> *KDTree<E>::createTreeNode(int left, int right, int dim) {
+KDNode<E> *KDTree<E>::createTreeNode(int left, int right) {
     if (right < left)
         return nullptr;
-    m_nCurDim = dim;
+    int nCurDim = calSplitDim(left, right);
     sort(m_Data.begin() + left,
-         m_Data.begin() + right+1,
-         [this](const vector<int> &a, const vector<int> &b) {return a[m_nCurDim] < b[m_nCurDim]; }
+         m_Data.begin() + right + 1,
+         [&](const vector<int> &a, const vector<int> &b) {return a[nCurDim] < b[nCurDim]; }
     );
-    int mid = (left + right+1) / 2;
-    auto *r = new KDNode<E>(m_Data[mid], dim);
-    r->pLeft = createTreeNode(left, mid - 1, (dim + 1) % m_nDimension);
+    int mid = (left + right + 1) / 2;
+    auto *r = new KDNode<E>(m_Data[mid], nCurDim);
+    r->pLeft = createTreeNode(left, mid - 1);
     if (r->pLeft != nullptr)
         r->pLeft->pParent = r;
-    r->pRight = createTreeNode(mid + 1, right, (dim + 1) % m_nDimension);
+    r->pRight = createTreeNode(mid + 1, right);
     if (r->pRight != nullptr)
         r->pRight->pParent = r;
     return r;
@@ -141,6 +168,7 @@ int KDTree<E>::disVector(const vector<E> &a, const vector<E> &b) {
         sum += (a[i] - b[i])*(a[i] - b[i]);
     return sum;
 }
+
 
 
 

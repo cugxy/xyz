@@ -3,7 +3,7 @@ set(BUILD_SHARED_LIBS ON)
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_INCLUDE}/bin)
 
-file(GLOB_RECURSE files src/*.cpp include/*.h include/*.hpp )
+file(GLOB_RECURSE files src/*.cpp include/*.h src/*/*.cpp include/*/*.h)
 
 include_directories(include ${PROJECT_SOURCE_DIR}/include)
 

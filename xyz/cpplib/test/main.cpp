@@ -1,7 +1,7 @@
 //
 // Created by cugxy on 2020/8/16.
 //
-#include "kd_tree.h"
+#include "tree/kd_tree.h"
 #include <vector>
 #include <iostream>
 
